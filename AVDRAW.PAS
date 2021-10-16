@@ -3,7 +3,7 @@
 {$ELSE}
   {$A+,B-,D-,F+,G+,I+,L-,N+,P+,Q-,R-,S-,V+,X+,Y-}
 {$ENDIF}
-program SksDraw(input, output);
+program AvDraw(input, output);
 
 uses
   Globals,
