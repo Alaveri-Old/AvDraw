@@ -127,6 +127,9 @@ var
   error: TError;
   test: TMemoryStream;
   buffer: PReference;
+
+  stream: TMemoryStream;
+  count: integer;
 begin
   TApplication.Init;
   TypeName := 'TDrawApp';
@@ -147,11 +150,10 @@ begin
     );
   end;
 
-
-  test.Create(262144);
-  buffer := test.Buffers^.GetItem(2);
-  Memory.SetCurrentReference(buffer);
-
+  stream.Create(1920000);
+  count := Stream.Buffers^.Count;
+  {see why it isn't deallocating}
+  stream.Done;
 
 {  InitGraphics;
   WriteLn('Graphics initialized.');
