@@ -151,8 +151,6 @@ begin
   end;
 
   stream.Create(1920000);
-  count := Stream.Buffers^.Count;
-  {see why it isn't deallocating}
   stream.Done;
 
 {  InitGraphics;
