@@ -171,9 +171,9 @@ begin
   begin
     WriteLn
     (
-      'XMS Memory Enabled.',
+      'XMS memory enabled.',
       #10#13,
-      MemAvail,
+      longint(Memory.LowerMemAvail),
       ' bytes lower memory available.',
       #10#13,
       longint(Memory.XmsMemAvail),
@@ -181,8 +181,10 @@ begin
     );
   end;
 
+
   stream.Create(2097152, error);
   stream.Done;
+
 
 {  InitGraphics;
   WriteLn('Graphics initialized.');
