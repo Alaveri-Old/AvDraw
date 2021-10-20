@@ -21,6 +21,8 @@ var
   Application: TDrawApp;
   ExeName: string;
   AppDirectory: string;
+  Graphics: TGraphicsDriver;
+  Keys: TKeyboardDriver;
 
 implementation
 
