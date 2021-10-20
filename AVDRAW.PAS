@@ -1,7 +1,7 @@
 {$IFDEF debug}
-  {$A+,B-,D+,F+,G+,I+,L+,N+,P+,Q+,R+,S+,V+,X+,Y+}
+  {$A+,B-,D+,E+,F+,G+,I+,L+,N+,O-,P+,Q+,R+,S+,V+,X+,Y+}
 {$ELSE}
-  {$A+,B-,D-,F+,G+,I+,L-,N+,P+,Q-,R-,S-,V+,X+,Y-}
+  {$A+,B-,D-,E+,F+,G+,I+,L-,N+,O-,P+,Q-,R-,S-,V+,X+,Y-}
 {$ENDIF}
 program AvDraw(input, output);
 
@@ -14,7 +14,7 @@ uses
 begin
   ExeName := ParamStr(0);
   AppDirectory := ExtractFilePath(ExeName);
-  Application.Create('Application');
+  Application.Create('Application', 65536);
   Application.Run;
   Application.Done;
 end.

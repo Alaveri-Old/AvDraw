@@ -19,28 +19,24 @@ uses
   WideStr,
   Drawing,
   Utils,
-  Mouse,
+  MouseDrv,
   Streams,
-  Apps;
-
-const
-  InterfaceReservedMem = 65536;
+  Apps,
+  GraphApp;
 
 type
   PDrawApp = ^TDrawApp;
-  TDrawApp = object(TApplication)
+  TDrawApp = object(TGraphicApplication)
   private
   public
-    InterfaceMem: longint;
     { Controls }
-    Desktop: PDesktop;
 
     { Properties }
     procedure Init; virtual;
-    procedure Run; virtual;
     procedure InitDefaultColors; virtual;
     procedure InitGraphics; virtual;
     procedure InitMenubar; virtual;
+    procedure MainLoop; virtual;
     procedure InitControls; virtual;
     destructor Done; virtual;
   end;
@@ -54,20 +50,15 @@ procedure TDrawApp.InitGraphics;
 var
   mode: PGraphicsMode;
   modeIndex: integer;
-  error: TError;
   factory: TGraphicsFactory;
   rect: TRect;
 begin
   factory.Create;
   factory.GetGraphicsDriver(gdSVga256, Graphics);
-  modeIndex := Graphics.Modes.IndexOfId('SVGA640x480x256');
+  modeIndex := Graphics.Modes.IndexOfId('SVGA800x600x256');
   mode := Graphics.Modes.GetItem(modeIndex);
-  Graphics.SetMode(mode^, error);
-  if (error.ErrorCode <> ecNone) then
-  begin
-    WriteLn(error.ErrorCode, ': ', error.ErrorMessage);
-    Halt(error.ErrorCode);
-  end;
+  Graphics.SetMode(mode^);
+  if (Graphics.Error.ErrorCode <> ecNone) then exit;
   rect.Create(0, 0, mode^.MaxX, mode^.MaxY);
   Graphics.SetViewPort(rect);
 end;
@@ -119,7 +110,6 @@ end;
 
 procedure TDrawApp.InitControls;
 begin
-  Desktop := new(PDesktop, Create('Application'));
   with Desktop^ do begin
     SetBounds(0, 0, Graphics.Mode.Width, Graphics.Mode.Height);
     ForeColor := icDesktop;
@@ -159,78 +149,34 @@ begin
   icFocused := Graphics.GetColor(scGreen, MaxIntensity);
 end;
 
-procedure TDrawApp.Init;
-var
-  error: TError;
-  test: TMemoryStream;
-  buffer: PReference;
-  {$IFDEF debug}
-    filename: string;
-    debugFile: File;
-    xmsHandle: word;
-    xmsControl: pointer;
-  {$ENDIF}
-begin
-  TApplication.Init;
-  TypeName := 'TDrawApp';
-  ClrScr;
-  {$IFDEF debug}
-    { Deallocate the last used XMS handle if the program abnormally terminated}
-    filename := 'XmsDebug.bin';
-    if FileExists(FileName) then
-    begin
-      Assign(debugFile, filename);
-      Reset(debugFile, 1);
-      BlockRead(debugFile, xmsHandle, SizeOf(xmsHandle));
-      System.Close(debugFile);
-      asm
-        push es
-        mov  ax, 4310h
-        int  2Fh
-        mov  word ptr [xmsControl], bx
-        mov  word ptr [xmsControl + 2], es
-        pop  es
-      end;
-      asm
-        mov  ah, 0Ah
-        mov  dx, [xmsHandle]
-        call [XmsControl]
-      end;
-    end;
-  {$ENDIF}
-  Memory.Create(InterfaceReservedMem);
-  WriteLn('Memory manager initialized.');
-  if (Memory.XmsEnabled) then
-  begin
-    WriteLn
-    (
-      'XMS memory enabled.',
-      #10#13,
-      longint(Memory.LowerMemAvail),
-      ' bytes lower memory available.',
-      #10#13,
-      longint(Memory.XmsMemAvail),
-      ' bytes XMS memory available.'
-    );
-  end;
-  InitGraphics;
-  WriteLn('Graphics initialized.');
-  InitDefaultColors;
-  InitMouse;
-  WriteLn('Mouse initialized.');
-  InitControls;
-end;
-
 destructor TDrawApp.Done;
 begin
   Memory.Done;
   Graphics.Done;
 end;
 
-procedure TDrawApp.Run;
+procedure TDrawApp.Init;
 begin
+  TGraphicApplication.Init;
+  InitGraphics;
+  if (Graphics.Error.ErrorCode <> ecNone) then
+  begin
+    WriteLn('Error: ', Graphics.Error.ErrorCode, ': ', Graphics.Error.ErrorMessage);
+    Memory.Done;
+    Close;
+    exit;
+  end
+  else
+  begin
+    WriteLn('Graphics initialized.');
+  end;
+  InitDefaultColors;
+  InitControls;
   Desktop^.Draw;
-  TApplication.Run;
+end;
+
+procedure TDrawApp.MainLoop;
+begin
 end;
 
 end.
