@@ -51,16 +51,12 @@ var
   mode: PGraphicsMode;
   modeIndex: integer;
   factory: TGraphicsFactory;
-  rect: TRect;
 begin
   factory.Create;
   factory.GetGraphicsDriver(gdSVga256, Graphics);
   modeIndex := Graphics.Modes.IndexOfId('SVGA800x600x256');
   mode := Graphics.Modes.GetItem(modeIndex);
   Graphics.SetMode(mode^);
-  if (Graphics.Error.ErrorCode <> ecNone) then exit;
-  rect.Create(0, 0, mode^.MaxX, mode^.MaxY);
-  Graphics.SetViewPort(rect);
 end;
 
 procedure TDrawApp.InitMenubar;
@@ -151,13 +147,12 @@ end;
 
 destructor TDrawApp.Done;
 begin
-  Memory.Done;
   Graphics.Done;
 end;
 
 procedure TDrawApp.Init;
 begin
-  TGraphicApplication.Init;
+  InitDefaultColors;
   InitGraphics;
   if (Graphics.Error.ErrorCode <> ecNone) then
   begin
@@ -170,7 +165,7 @@ begin
   begin
     WriteLn('Graphics initialized.');
   end;
-  InitDefaultColors;
+  TGraphicApplication.Init;
   InitControls;
   Desktop^.Draw;
 end;
