@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/bin/*.tpu
+/XMSDEBUG.BIN
+/TURBO.TP
+/TURBO.DSK
+/BP.TP
+/BP.DSK
+/BIN/XMSDEBUG.BIN
+/BIN/AVDRAW.MAP
+/BIN/AVDRAW.EXE
+/BP.PSM
