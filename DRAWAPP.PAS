@@ -1,8 +1,4 @@
-{$IFDEF debug}
-  {$A-,B-,D+,F+,G+,I+,L+,N+,P+,Q+,R+,S+,V+,X+,Y+}
-{$ELSE}
-  {$A-,B-,D-,F+,G+,I+,L-,N+,P+,Q-,R-,S-,V+,X+,Y-}
-{$ENDIF}
+{$I Compiler.inc}
 unit DrawApp;
 
 interface
@@ -33,8 +29,6 @@ type
 
     { Properties }
     procedure Init; virtual;
-    procedure InitDefaultColors; virtual;
-    procedure InitGraphics; virtual;
     procedure InitMenubar; virtual;
     procedure MainLoop; virtual;
     procedure InitControls; virtual;
@@ -45,19 +39,6 @@ implementation
 
 uses
   Globals;
-
-procedure TDrawApp.InitGraphics;
-var
-  mode: PGraphicsMode;
-  modeIndex: integer;
-  factory: TGraphicsFactory;
-begin
-  factory.Create;
-  factory.GetGraphicsDriver(gdSVga256, Graphics);
-  modeIndex := Graphics.Modes.IndexOfId('SVGA800x600x256');
-  mode := Graphics.Modes.GetItem(modeIndex);
-  Graphics.SetMode(mode^);
-end;
 
 procedure TDrawApp.InitMenubar;
 var
@@ -115,36 +96,6 @@ begin
   InitMenuBar;
 end;
 
-procedure TDrawApp.InitDefaultColors;
-begin
-  icDesktop := Graphics.GetColor(scWhite, MaxIntensity);
-  icDesktopBack := Graphics.GetColor(scGreen, MaxIntensity);
-  icWindow := Graphics.GetColor(scBlack, 0);
-  icWindowBack := Graphics.GetColor(scWhite, MaxIntensity);
-  icBorder := Graphics.GetColor(scBlack, 0);
-  icButton := Graphics.GetColor(scBlack, 0);
-  icButtonBack := Graphics.GetColor(scWhite, Intensity75);
-  icButtonDown := Graphics.GetColor(scBlack, 0);
-  icButtonDownBack := Graphics.GetColor(scWhite, Intensity75);
-  icButtonHotKey := Graphics.GetColor(scRed, MaxIntensity);
-  icButtonShadow := Graphics.GetColor(scWhite, Intensity25);
-  icButtonHighlight := Graphics.GetColor(scWhite, 11);
-  icWindowTitle := Graphics.GetColor(scBlack, 0);
-  icWindowTitleBack := Graphics.GetColor(scGreen, MaxIntensity);
-  icMenu := Graphics.GetColor(scBlack, 0);
-  icMenuBack := Graphics.GetColor(scWhite, MaxIntensity);
-  icHotKey := Graphics.GetColor(scRed, MaxIntensity);
-  icScroll := Graphics.GetColor(scBlack, 0);
-  icScrollBack := Graphics.GetColor(scWhite, Intensity50);
-  icEditor := Graphics.GetColor(scBlack, MaxIntensity);
-  icEditorBack := Graphics.GetColor(scWhite, MaxIntensity);
-  icDialog := Graphics.GetColor(scBlack, 0);
-  icDialogBack := Graphics.GetColor(scCyan, MaxIntensity);
-  icSelect := Graphics.GetColor(scWhite, MaxIntensity);
-  icSelectBack := Graphics.GetColor(scGreen, MaxIntensity);
-  icFocused := Graphics.GetColor(scGreen, MaxIntensity);
-end;
-
 destructor TDrawApp.Done;
 begin
   Graphics.Done;
@@ -152,12 +103,12 @@ end;
 
 procedure TDrawApp.Init;
 begin
-  InitDefaultColors;
-  InitGraphics;
+  TGraphicApplication.Init;
+  TypeName := 'TDrawApp';
+  InitGraphics(gdSVga256, 'SVGA800x600x256');
   if (Graphics.Error.ErrorCode <> ecNone) then
   begin
     WriteLn('Error: ', Graphics.Error.ErrorCode, ': ', Graphics.Error.ErrorMessage);
-    Memory.Done;
     Close;
     exit;
   end
@@ -165,7 +116,6 @@ begin
   begin
     WriteLn('Graphics initialized.');
   end;
-  TGraphicApplication.Init;
   InitControls;
   Desktop^.Draw;
 end;

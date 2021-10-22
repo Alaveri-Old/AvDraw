@@ -10,7 +10,7 @@ uses
 begin
   ExeName := ParamStr(0);
   AppDirectory := ExtractFilePath(ExeName);
-  Application.Create('Application');
+  Application.Create('Application', 65536);
   Application.Run;
   Application.Done;
 end.
