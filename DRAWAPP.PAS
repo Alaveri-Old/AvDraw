@@ -88,7 +88,7 @@ end;
 procedure TDrawApp.InitControls;
 begin
   with Desktop^ do begin
-    SetBounds(0, 0, Graphics.Mode.Width, Graphics.Mode.Height);
+    SetBounds(0, 0, Graphics.Mode^.Width, Graphics.Mode^.Height);
     ForeColor := icDesktop;
     BackColor := icDesktopBack;
     SetupControls;
@@ -104,7 +104,7 @@ end;
 procedure TDrawApp.Init;
 begin
   TypeName := 'TDrawApp';
-  InitGraphics(gdSVga256, 'SVGA800x600x256');
+  InitGraphics(gdSVga256, 'SVGA800x600x8');
   TGraphicApplication.Init;
   if (Graphics.Error.ErrorCode <> ecNone) then
   begin
