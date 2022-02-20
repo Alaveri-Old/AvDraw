@@ -104,7 +104,7 @@ end;
 procedure TDrawApp.Init;
 begin
   TypeName := 'TDrawApp';
-  InitGraphics(gdSVga256, 'SVGA800x600x8');
+  InitGraphics(gdSVga256, 'SVGA1024x768x8');
   TGraphicApplication.Init;
   if (Graphics.Error.ErrorCode <> ecNone) then
   begin
